@@ -1,6 +1,9 @@
 package com.TseniukhAnton.javacore.chapter20;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
 
 public class FileDemo {
     static void p(String s) {
@@ -42,6 +45,46 @@ class DirList {
             }
         } else {
             System.out.println(dirname + " is not a directory");
+        }
+    }
+}
+
+class FileInputStreamDemo {
+    public static void main(String[] args) {
+        int size;
+        try (FileInputStream f = new FileInputStream("D:\\JavaLearning\\JavaCore\\src\\main\\java\\com\\TseniukhAnton\\javacore\\chapter20\\FileDemo.java")) {
+            System.out.println("Bytes available: " + (size = f.available()));
+
+            int n = size / 40;
+            System.out.println("First " + n + " bytes" + " read from file in a row using method read()");
+            for (int i = 0; i < n; i++) {
+                System.out.println((char) f.read());
+            }
+            System.out.println("\nStill available: " + f.available());
+            System.out.println("Reading next " + n + " bytes using read(b[])");
+
+            byte b[] = new byte[n];
+            if (f.read(b) != n) {
+                System.out.println("Impossible to read " + n + " bytes");
+            }
+
+            System.out.println(new String(b, 0, n));
+            System.out.println("\nStill available: " + (size = f.available()));
+
+            System.out.println("Skip all remained bytes usin skip()");
+            f.skip(size);
+            System.out.println("Still available: " + f.available());
+
+            System.out.println("Reading " + n / 2 + " bytes from array's end");
+
+            if (f.read(b, n / 2, n / 2) != n / 2) {
+                System.err.println("Impossible to read " + n / 2 + " bytes");
+            }
+            System.out.println(new String(b, 0, b.length));
+            System.out.println("\nStill available: " + f.available());
+
+        } catch (IOException e) {
+            System.out.println("IOExceptio: " + e);
         }
     }
 }
