@@ -391,17 +391,17 @@ class GenericMethodRefDemo {
 class MyClass {
     private int val;
 
-    MyClass(int v){
+    MyClass(int v) {
         val = v;
     }
 
-    int getVal(){
+    int getVal() {
         return val;
     }
 }
 
 class UseMethodRef {
-    static int compareMC(MyClass a, MyClass b){
+    static int compareMC(MyClass a, MyClass b) {
         return a.getVal() - b.getVal();
     }
 
@@ -422,11 +422,35 @@ class UseMethodRef {
 }
 
 
+interface MyFunk {
+    MyClasss func(int n);
+}
 
+class MyClasss{
+    private int val;
 
+    MyClasss(int v){
+        val = v;
+    }
 
+    MyClasss(){
+        val = 0;
+    }
 
+    int getVal(){
+        return val;
+    }
+}
 
+class ConstructorRefDemo {
+    public static void main(String[] args) {
+        MyFunk myClassCons = MyClasss::new;
+
+        MyClasss mc = myClassCons.func(100);
+
+        System.out.println("Value val in the Object mc equals " + mc.getVal());
+    }
+}
 
 
 
