@@ -421,23 +421,23 @@ class UseMethodRef {
     }
 }
 
-
+@FunctionalInterface
 interface MyFunk {
     MyClasss func(int n);
 }
 
-class MyClasss{
+class MyClasss {
     private int val;
 
-    MyClasss(int v){
+    MyClasss(int v) {
         val = v;
     }
 
-    MyClasss(){
+    MyClasss() {
         val = 0;
     }
 
-    int getVal(){
+    int getVal() {
         return val;
     }
 }
@@ -452,9 +452,33 @@ class ConstructorRefDemo {
     }
 }
 
+@FunctionalInterface
+interface MyNewFunk<T> {
+    MyNewClass<T> func(T n);
+}
 
+class MyNewClass<T> {
+    private T val;
 
+    MyNewClass(T v){
+        val = v;
+    }
 
+    MyNewClass(){
+        val = null;
+    }
 
+    T getVal(){
+        return val;
+    }
+}
 
+class ConstructorRefDemo2 {
+    public static void main(String[] args) {
+        MyNewFunk<Integer> myClassCons = MyNewClass::new;
 
+        MyNewClass<Integer> mc = myClassCons.func(100);
+
+        System.out.println("Value of val in object mc equals " + mc.getVal());
+    }
+}
