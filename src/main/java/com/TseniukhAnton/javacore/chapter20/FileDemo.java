@@ -1,6 +1,8 @@
 package com.TseniukhAnton.javacore.chapter20;
 
 import java.io.*;
+import java.util.Enumeration;
+import java.util.Vector;
 
 public class FileDemo {
     static void p(String s) {
@@ -152,9 +154,9 @@ class ByteArrayOutputStreamDemo {
         String s = "This data should be added into array";
         byte[] buf = s.getBytes();
 
-        try{
+        try {
             f.write(buf);
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Error while recording into buffer");
             //return;
         }
@@ -167,16 +169,16 @@ class ByteArrayOutputStreamDemo {
 
         System.out.println("\nInto stream type OutputStream");
 
-        try(FileOutputStream f2 = new FileOutputStream("text.txt")){
+        try (FileOutputStream f2 = new FileOutputStream("text.txt")) {
             f.writeTo(f2);
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println("IO exception: " + e);
         }
 
         System.out.println("Back to initial condition");
         f.reset();
 
-        for (int i = 0; i < 3 ; i++) {
+        for (int i = 0; i < 3; i++) {
             f.write('X');
         }
         System.out.println(f.toString());
@@ -184,13 +186,123 @@ class ByteArrayOutputStreamDemo {
 }
 
 
+class BufferedInputStreamDemo {
+    public static void main(String[] args) {
+        String s = "This is the sign of property &copy;" +
+                ", and &copy - is not.\n";
+        byte[] buf = s.getBytes();
 
+        ByteArrayInputStream in = new ByteArrayInputStream(buf);
+        int c;
+        boolean marked = false;
+        try (BufferedInputStream f = new BufferedInputStream(in)) {
+            while ((c = f.read()) != -1) {
+                switch (c) {
+                    case '&':
+                        if (!marked) {
+                            f.mark(32);
+                            marked = true;
+                        } else {
+                            marked = false;
+                        }
+                        break;
+                    case ';':
+                        if (marked) {
+                            marked = false;
+                            System.out.print("(c)");
+                        }
+                        break;
+                    case ' ':
+                        if (marked) {
+                            marked = false;
+                            f.reset();
+                            System.out.print("&");
+                        } else {
+                            System.out.print((char) c);
+                        }
+                        break;
+                    default:
+                        if (!marked)
+                            System.out.print((char) c);
+                        break;
+                }
+            }
+        } catch (IOException e) {
+            System.out.print("IO error: " + e);
+        }
+    }
+}
 
+class PushbackIntoStreamDemo {
+    public static void main(String[] args) {
+        String s = "if (a == 4) a = 0;\n";
+        byte[] buf = s.getBytes();
+        ByteArrayInputStream in = new ByteArrayInputStream(buf);
+        int c;
 
+        try (PushbackInputStream f = new PushbackInputStream(in)) {
+            while ((c = f.read()) != -1) {
+                switch (c) {
+                    case '=':
+                        if ((c = f.read()) == '=')
+                            System.out.print(".eq.");
+                        else {
+                            System.out.print("<-");
+                            f.unread(c);
+                        }
+                        break;
+                    default:
+                        System.out.print((char) c);
+                        break;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("IO error: " + e);
+        }
+    }
+}
 
+class InputStreamEnumerator implements Enumeration<FileInputStream> {
+    private Enumeration<String> files;
 
+    public InputStreamEnumerator(Vector<String> files) {
+        this.files = files.elements();
+    }
 
+    @Override
+    public boolean hasMoreElements() {
+        return files.hasMoreElements();
+    }
 
+    @Override
+    public FileInputStream nextElement() {
+        try {
+            return new FileInputStream(files.nextElement().toString());
+        }catch (IOException e){
+            return null;
+        }
+    }
+}
+
+class SequenceInputStreamDemo {
+    public static void main(String[] args) {
+        int c;
+        Vector<String> files = new Vector<String>();
+        files.add("file1.txt");
+        files.add("file2.txt");
+        files.add("file3.txt");
+
+        InputStreamEnumerator ise = new InputStreamEnumerator(files);
+        InputStream input = new SequenceInputStream(ise);
+
+        try {
+            while ((c = input.read() ) != -1)
+                System.out.print((char) c);
+        }catch (NullPointerException | IOException ex) {
+            System.out.println("IO error: " + ex);
+        }
+    }
+}
 
 
 
