@@ -1,9 +1,6 @@
 package com.TseniukhAnton.javacore.chapter20;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.io.*;
 
 public class FileDemo {
     static void p(String s) {
@@ -88,3 +85,118 @@ class FileInputStreamDemo {
         }
     }
 }
+
+class FileOutputStreamDemo {
+    public static void main(String[] args) {
+        String source = "Now it's time for all good men\n" +
+                " to come to the aid of their country\n" +
+                " and pay their due taxes.";
+        byte[] buf = source.getBytes();
+
+        try (FileOutputStream f0 = new FileOutputStream("file1.txt");
+             FileOutputStream f1 = new FileOutputStream("file2.txt");
+             FileOutputStream f2 = new FileOutputStream("file3.txt")) {
+
+            for (int i = 0; i < buf.length; i += 2) f0.write(buf[i]);
+
+            f1.write(buf);
+            f2.write(buf, buf.length - buf.length / 4, buf.length / 4);
+
+        } catch (IOException e) {
+            System.out.println("IO exception happened");
+//        } finally {
+//            try {
+//                if (f0 != null) f0.close();
+//            } catch (IOException e) {
+//                System.out.println("Error while closing file1.txt");
+//            }
+//            try {
+//                if (f1 != null) {
+//                    f1.close();
+//                }
+//            } catch (IOException e) {
+//                System.out.println("Error while closing file2.txt");
+//            }
+//            try {
+//                if (f2 != null) f2.close();
+//            }catch (IOException e){
+//                System.out.println("Error while closing file3.txt");
+        }
+    }
+}
+
+class ByteArrayInputStreamReset {
+    public static void main(String[] args) {
+        String tmp = "abc";
+        byte[] b = tmp.getBytes();
+        ByteArrayInputStream in = new ByteArrayInputStream(b);
+
+        for (int i = 0; i < 2; i++) {
+            int c;
+            while ((c = in.read()) != -1) {
+                if (i == 0) {
+                    System.out.print((char) c);
+                } else {
+                    System.out.print(Character.toUpperCase((char) c));
+                }
+            }
+            System.out.println();
+            in.reset();
+        }
+    }
+}
+
+class ByteArrayOutputStreamDemo {
+    public static void main(String[] args) {
+        ByteArrayOutputStream f = new ByteArrayOutputStream();
+        String s = "This data should be added into array";
+        byte[] buf = s.getBytes();
+
+        try{
+            f.write(buf);
+        }catch (IOException e){
+            System.out.println("Error while recording into buffer");
+            //return;
+        }
+        System.out.println("Buffer like a string of symbols");
+        System.out.println(f.toString());
+        System.out.println("Into array");
+
+        byte[] b = f.toByteArray();
+        for (int i = 0; i < b.length; i++) System.out.print((char) b[i]);
+
+        System.out.println("\nInto stream type OutputStream");
+
+        try(FileOutputStream f2 = new FileOutputStream("text.txt")){
+            f.writeTo(f2);
+        }catch (IOException e){
+            System.out.println("IO exception: " + e);
+        }
+
+        System.out.println("Back to initial condition");
+        f.reset();
+
+        for (int i = 0; i < 3 ; i++) {
+            f.write('X');
+        }
+        System.out.println(f.toString());
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
