@@ -278,7 +278,7 @@ class InputStreamEnumerator implements Enumeration<FileInputStream> {
     public FileInputStream nextElement() {
         try {
             return new FileInputStream(files.nextElement().toString());
-        }catch (IOException e){
+        } catch (IOException e) {
             return null;
         }
     }
@@ -296,19 +296,78 @@ class SequenceInputStreamDemo {
         InputStream input = new SequenceInputStream(ise);
 
         try {
-            while ((c = input.read() ) != -1)
+            while ((c = input.read()) != -1)
                 System.out.print((char) c);
-        }catch (NullPointerException | IOException ex) {
+        } catch (NullPointerException | IOException ex) {
             System.out.println("IO error: " + ex);
         }
     }
 }
 
+class PrintfDemo {
+    public static void main(String[] args) {
+        System.out.println("Below listed some " +
+                "values  in different formats.\n");
 
+        System.out.printf("Different numeric values: ");
+        System.out.printf("%d %(d %+d %05d\n", 3, -3, 3, 3);
 
+        System.out.println();
+        System.out.printf("Float format " +
+                " by default : %f\n", 1234567.123);
+        System.out.printf("Float format" +
+                " divided by commas : %,f\n", 1234567.123);
+        System.out.printf("Float negative format " +
+                " : %,f\n", -1234567.123);
+        System.out.printf("Another negative format " +
+                " : %,(f\n", -1234567.123);
 
+        System.out.println();
+        System.out.printf("Alignment negative and positive values:\n");
+        System.out.printf("'% ,.2f\n% ,.2f\n',");
+    }
+}
 
+class DataIODemo {
+    public static void main(String[] args) {
+        try (DataOutputStream dout = new DataOutputStream(new FileOutputStream("Test.dat"))) {
+            dout.writeDouble(98.6);
+            dout.writeInt(1000);
+            dout.writeBoolean(true);
+        } catch (FileNotFoundException e) {
+            System.out.println("Can't open output file");
+            return;
+        } catch (IOException e) {
+            System.out.println("IO error: " + e);
+        }
 
+        try (DataInputStream din = new DataInputStream(new FileInputStream("Test.dat"))) {
+            double d = din.readDouble();
+            int i = din.readInt();
+            boolean b = din.readBoolean();
+
+            System.out.println("Got values: " +
+                    d + " " + i + " " + b);
+        } catch (FileNotFoundException e) {
+            System.out.println("Can't open input file ");
+            return;
+        } catch (IOException e) {
+            System.out.println("IO error: " + e);
+        }
+    }
+}
+
+class FileReaderDemo {
+    public static void main(String[] args) {
+        try(FileReader fr = new FileReader("D:\\JavaLearning\\JavaCore\\src\\main\\java\\com\\TseniukhAnton\\javacore\\chapter20\\FileDemo.java"))
+        {
+            int c;
+            while ((c = fr.read()) != -1) System.out.print((char) c);
+        }catch (IOException e){
+            System.out.println("IO error: " + e);
+        }
+    }
+}
 
 
 
