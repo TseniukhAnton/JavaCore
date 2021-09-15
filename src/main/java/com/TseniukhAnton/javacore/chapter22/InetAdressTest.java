@@ -5,6 +5,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.*;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class InetAdressTest {
     public static void main(String[] args) throws UnknownHostException {
@@ -108,9 +111,73 @@ class UCDemo {
 }
 
 
+class HttpURLDemo {
+    public static void main(String[] args) throws IOException {
+        URL hp = new URL("http://www.google.com");
+        HttpURLConnection hpCon = (HttpURLConnection) hp.openConnection();
 
+        System.out.println("Request method: " + hpCon.getRequestMethod());
+        System.out.println("Response code: " + hpCon.getResponseCode());
+        System.out.println("Reply message: " + hpCon.getResponseMessage());
 
+        Map<String, List<String>> hdrMap = hpCon.getHeaderFields();
+        Set<String> hdrField = hdrMap.keySet();
 
+        System.out.println("\nHeader goes further: ");
+
+        for (String k : hdrField) {
+            System.out.println("Key: " + k + " Value: " + hdrMap.get(k));
+        }
+    }
+}
+
+class WriteServer {
+    public static int serverPort = 998;
+    public static int clientPort = 999;
+    public static int buffer_size = 1024;
+    public static DatagramSocket ds;
+    public static byte buffer[] = new byte[buffer_size];
+
+    public static void TheServer() throws Exception {
+        int pos = 0;
+        while (true) {
+            int c = System.in.read();
+            switch (c) {
+                case -1:
+                    System.out.println("End of connection");
+                    ds.close();
+                    return;
+                case '\r':
+                    break;
+
+                case '\n':
+                    ds.send(new DatagramPacket(buffer, pos, InetAddress.getLocalHost(), clientPort));
+                    pos = 0;
+                    break;
+                default:
+                    buffer[pos++] = (byte) c;
+            }
+        }
+    }
+
+    public static void TheClient() throws Exception {
+        while (true) {
+            DatagramPacket p = new DatagramPacket(buffer, buffer.length);
+            ds.receive(p);
+            System.out.println(new String(p.getData(), 0, p.getLength()));
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        if (args.length == 1) {
+            ds = new DatagramSocket(serverPort);
+            TheServer();
+        } else {
+            ds = new DatagramSocket(clientPort);
+            TheClient();
+        }
+    }
+}
 
 
 
