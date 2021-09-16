@@ -18,11 +18,11 @@ public class StreamDemo {
 
         Stream<Integer> myStream = myList.stream();
         Optional<Integer> minVal = myStream.min(Integer::compare);
-        if (minVal.isPresent()) System.out.println("Min value is: " + minVal.get());
+        minVal.ifPresent(integer -> System.out.println("Min value is: " + integer));
 
         myStream = myList.stream();
         Optional<Integer> maxVal = myStream.max(Integer::compare);
-        if (maxVal.isPresent()) System.out.println("Max value is: " + maxVal.get());
+        maxVal.ifPresent(integer -> System.out.println("Max value is: " + integer));
 
         Stream<Integer> sortedStream = myList.stream().sorted();
         System.out.print("Sorted data stream: ");
@@ -55,23 +55,90 @@ class StreamDemo2 {
         myList.add(5);
 
         Optional<Integer> productObj = myList.stream().reduce((a, b) -> a * b);
-        if (productObj.isPresent())
-            System.out.println("Multiply object type Optional: " + productObj.get());
+        productObj.ifPresent(integer -> System.out.println("Multiply object type Optional: " + integer));
 
         int product = myList.stream().reduce(1, (a, b) -> a * b);
         System.out.println("Multiply int values: " + product);
     }
 }
 
+class StreamDemo3 {
+    public static void main(String[] args) {
+        ArrayList<Double> myList = new ArrayList<>();
+        myList.add(7.0);
+        myList.add(18.0);
+        myList.add(10.0);
+        myList.add(24.0);
+        myList.add(17.0);
+        myList.add(5.0);
 
+        double productOfSqrRoots = myList.parallelStream().reduce(1.0, (a, b) -> a * Math.sqrt(b),
+                (a, b) -> a * b);
 
+        System.out.println("Multiply of sqrt values: " + productOfSqrRoots);
+    }
+}
 
+class StreamDemo4 {
+    public static void main(String[] args) {
+        ArrayList<Double> myList = new ArrayList<>();
+        myList.add(7.0);
+        myList.add(18.0);
+        myList.add(10.0);
+        myList.add(24.0);
+        myList.add(17.0);
+        myList.add(5.0);
 
+        Stream<Double> sqrtRootStrm = myList.stream().map(Math::sqrt);
 
+        double productOfSqrRoots = sqrtRootStrm.reduce(1.0, (a, b) -> a * b);
+        System.out.println("Multiplication of sqrt equals: " + productOfSqrRoots);
+    }
+}
 
+class NamePhoneEmail {
+    String name;
+    String phonenum;
+    String email;
 
+    public NamePhoneEmail(String n, String p, String e) {
+        name = n;
+        phonenum = p;
+        email = e;
+    }
+}
 
+class NamePhone {
+    String name;
+    String phonenum;
 
+    NamePhone(String n, String p) {
+        name = n;
+        phonenum = p;
+    }
+}
+
+class StreamDemo5 {
+    public static void main(String[] args) {
+        ArrayList<NamePhoneEmail> myList = new ArrayList<>();
+        myList.add(new NamePhoneEmail("Larry", "555-5555", "larry@i.ua"));
+        myList.add(new NamePhoneEmail("James", "544-5555", "james@i.ua"));
+        myList.add(new NamePhoneEmail("Mary", "775-5555", "mary@i.ua"));
+
+        System.out.println("Initial elements from myList: ");
+        myList.stream().forEach(a -> {
+            System.out.println(a.name + " " + a.phonenum + " " + a.email);
+        });
+        System.out.println();
+
+        Stream<NamePhone> nameAndPhone = myList.stream().map(a -> new NamePhone(a.name, a.phonenum));
+
+        System.out.println("List of names and phone numbers: ");
+        nameAndPhone.forEach(a -> {
+            System.out.println(a.name + " " + a.phonenum);
+        });
+    }
+}
 
 
 
