@@ -1,7 +1,8 @@
 package com.TseniukhAnton.javacore.chapter29;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class StreamDemo {
@@ -139,6 +140,126 @@ class StreamDemo5 {
         });
     }
 }
+
+class StreamDemo6 {
+    public static void main(String[] args) {
+        ArrayList<Double> myList = new ArrayList<>();
+        myList.add(1.1);
+        myList.add(3.6);
+        myList.add(9.2);
+        myList.add(4.7);
+        myList.add(12.1);
+        myList.add(5.0);
+
+        System.out.print("Initial values of myList: ");
+
+        myList.stream().forEach(a -> {
+            System.out.print(a + " ");
+        });
+        System.out.println();
+
+        IntStream cStrm = myList.stream().mapToInt(a -> (int) Math.ceil(a));
+
+        System.out.print("Max border values from myList: ");
+        cStrm.forEach(a -> {
+            System.out.print(a + " ");
+        });
+
+    }
+}
+
+class StreamDemo7 {
+    public static void main(String[] args) {
+        ArrayList<NamePhoneEmail> myList = new ArrayList<>();
+
+        myList.add(new NamePhoneEmail("Larry", "555-5555", "larry@i.ua"));
+        myList.add(new NamePhoneEmail("James", "544-5555", "james@i.ua"));
+        myList.add(new NamePhoneEmail("Mary", "775-5555", "mary@i.ua"));
+
+        Stream<NamePhone> nameAndPhone = myList.stream().map(a -> new NamePhone(a.name, a.phonenum));
+
+        List<NamePhone> npList = nameAndPhone.collect(Collectors.toList());
+        System.out.println("Names and phones in type List: ");
+        for (NamePhone e : npList)
+            System.out.println(e.name + ": " + e.phonenum);
+
+        nameAndPhone = myList.stream().map(a -> new NamePhone(a.name, a.phonenum));
+
+        Set<NamePhone> npSet = nameAndPhone.collect(Collectors.toSet());
+        System.out.println("\nNames and phones using Set:");
+
+        for (NamePhone e : npSet)
+            System.out.println(e.name + ": " + e.phonenum);
+    }
+}
+
+class StreamDemo8 {
+    public static void main(String[] args) {
+        ArrayList<String> myList = new ArrayList<>();
+        myList.add("Alpha");
+        myList.add("Betta");
+        myList.add("Gamma");
+        myList.add("Delta");
+        myList.add("Xi");
+        myList.add("Omega");
+
+        Stream<String> myStream = myList.stream();
+        Iterator<String> itr = myStream.iterator();
+        while (itr.hasNext()) {
+            System.out.println(itr.next());
+        }
+    }
+}
+
+class StreamDemo9 {
+    public static void main(String[] args) {
+        ArrayList<String> myList = new ArrayList<>();
+        myList.add("Alpha");
+        myList.add("Betta");
+        myList.add("Gamma");
+        myList.add("Delta");
+        myList.add("Xi");
+        myList.add("Omega");
+
+        Stream<String> myStream = myList.stream();
+        Spliterator<String> splitItr = myStream.spliterator();
+        while (splitItr.tryAdvance((n) -> System.out.println(n))) ;
+    }
+}
+
+class StreamDemo10 {
+    public static void main(String[] args) {
+        ArrayList<String> myList = new ArrayList<>();
+        myList.add("Alpha");
+        myList.add("Betta");
+        myList.add("Gamma");
+        myList.add("Delta");
+        myList.add("Xi");
+        myList.add("Omega");
+
+        Stream<String> myStream = myList.stream();
+        Spliterator<String> splitItr = myStream.spliterator();
+        Spliterator<String> splitItr2 = splitItr.trySplit();
+        if (splitItr2 != null) {
+            System.out.println("Result from spltItr2: ");
+            splitItr2.forEachRemaining(n -> System.out.println(n));
+        }
+        System.out.println("\nResult from splitItr: ");
+        splitItr.forEachRemaining(n -> System.out.println(n));
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
